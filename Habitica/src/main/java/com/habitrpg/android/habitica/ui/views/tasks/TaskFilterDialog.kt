@@ -2,6 +2,7 @@ package com.habitrpg.android.habitica.ui.views.tasks
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.util.TypedValue
@@ -274,11 +275,13 @@ class TaskFilterDialog(context: Context, component: UserComponent?) : HabiticaAl
             }
         }
         setActiveFilter(activeFilter)
+
     }
 
     private fun setActiveFilter(activeFilter: String?) {
         filterType = activeFilter
         var checkedId = -1
+        var tempBoolean = true;//imitate option -> dailyDueDefaultView
         if (activeFilter == null) {
             checkedId = R.id.all_task_filter
         } else {
@@ -286,9 +289,14 @@ class TaskFilterDialog(context: Context, component: UserComponent?) : HabiticaAl
                 Task.FILTER_ALL -> checkedId = R.id.all_task_filter
                 Task.FILTER_WEAK, Task.FILTER_DATED -> checkedId = R.id.second_task_filter
                 Task.FILTER_STRONG, Task.FILTER_GRAY, Task.FILTER_COMPLETED -> checkedId = R.id.third_task_filter
-                Task.FILTER_ACTIVE -> checkedId = if (taskType == Task.TYPE_DAILY) {
-                    R.id.second_task_filter
-                } else {
+                Task.FILTER_ACTIVE -> checkedId =
+                if (taskType == Task.TYPE_DAILY) ({
+                    if(tempBoolean){//TODO: SharedPreferences read
+                        R.id.second_task_filter
+                    } else {
+                        R.id.third_task_filter
+                    }
+                }) as Int else {
                     R.id.all_task_filter
                 }
             }
